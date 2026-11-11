@@ -7,13 +7,17 @@ static void *consumer_run(void *arg) {
     for (;;) {
         Event e;
         int rc = monitor_consume(a->m, &e);
-        if (rc != 0) break;                    
-        printf("consume: payload=%ld lifetime=%zu\n",
-               (long)e.payload, e.lifetime);
+        if (rc != 0) break;
+
+        Payload *p = e.payload;
+        printf("consume: id=%d name=%s\n", p->id, p->name);
+        fflush(stdout);
+
         if (++got >= a->count) break;
     }
     return NULL;
 }
+
 int consumer_start(pthread_t *t, ConsumerArgs *a) {
     return pthread_create(t, NULL, consumer_run, a);
 }
